@@ -1,31 +1,21 @@
-import requests
 from openai import OpenAI
 from openai.types import ModerationModel
 
-from src import constants, types
-
-
-def content_from_pretty_url(pretty_url: str) -> str:
-    try:
-        response = requests.get(pretty_url, timeout=10)
-    except requests.exceptions.RequestException as e:
-        raise e
-
-    return response.text
+from src import constants, types_module
 
 
 def moderate(
-    url_content: str,
+    cleaned_url_content: str,
     model: ModerationModel = constants.MODERATION_MODEL,
-) -> types.ModerationResponse:
+) -> types_module.ModerationResponse:
     client = OpenAI()
 
     reponse = client.moderations.create(
         model=model,
-        input=url_content,
+        input=cleaned_url_content,
     )
 
-    return types.ModerationResponse(
+    return types_module.ModerationResponse(
         flagged=reponse.results[0].flagged,
         categories=[
             reason
