@@ -20,3 +20,6 @@ class BlackList:
         with open(BLACKLIST_FILE, "r", encoding="utf-8") as f:
             self._blacklist = f.read().splitlines()
         print(f"Loaded {len(self._blacklist)} blocked hosts")
+
+
+BLACK_LIST = BlackList()
