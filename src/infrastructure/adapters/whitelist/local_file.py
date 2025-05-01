@@ -11,7 +11,7 @@ class LocalFileWhitelist:
         self._whitelist = self._load()
 
     def is_whitelisted(self, domain: str) -> bool:
-        return any(domain in item.domain_url for item in self._whitelist)
+        return any(item.domain_url in domain for item in self._whitelist)
 
     def get_domains(self) -> list[WhiteListItem]:
         return self._whitelist

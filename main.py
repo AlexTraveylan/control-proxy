@@ -10,14 +10,14 @@ logs.init_logger()
 logger = logging.getLogger(__name__)
 
 whitelist_adapter = whitelist.LocalFileWhitelist(constants.WHITELIST_FILE)
+print("whitelist", whitelist_adapter.get_domains())
 
 
 def request(flow: http.HTTPFlow) -> None:
-    print(f"Request received: {flow.request.pretty_url}")
-    logger.info("Request received: %s", flow.request.pretty_url)
-    host = flow.request.pretty_host.lower()
+    pretty_url = flow.request.pretty_url
+    logger.info("Request received: %s", pretty_url)
 
-    if whitelist_adapter.is_whitelisted(host) is False:
+    if whitelist_adapter.is_whitelisted(pretty_url) is False:
         with open(constants.HTML_BLOCKED_FILE, "r", encoding="utf-8") as f:
             html_template = f.read()
         html_content = html_template.replace("{{url}}", flow.request.pretty_url)
@@ -27,4 +27,6 @@ def request(flow: http.HTTPFlow) -> None:
             html_content.encode("utf-8"),
             {"Content-Type": "text/html; charset=utf-8"},
         )
-        logger.info("Blocked request: %s", flow.request.pretty_url)
+        logger.warning("Blocked request: %s", pretty_url)
+    else:
+        logger.info("Allowed request: %s", pretty_url)
